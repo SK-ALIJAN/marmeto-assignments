@@ -28,11 +28,42 @@ async function Attach_Data_To_Ui() {
 
   // creating element here
   let MainImageTag = document.createElement("img");
-  let AnotherImages = document.createElement("img");
+  let TitleDiv = document.createElement("div");
+  let Vendor = document.createElement("p");
+  let title = document.createElement("p");
+  let priceDiv = document.createElement("div");
+  let mainPrice = document.createElement("div");
+  let discountPrice = document.createElement("p");
+  let discountRate = document.createElement("p");
+  let originalPrice = document.createElement("p");
+  let colorDiv = document.createElement("div");
+  let colortag = document.createElement("p");
+  let colors = document.createElement("div");
 
   // set the value to the element
   MainImageTag.setAttribute("src", ProductDetails.images[0].src);
+  ProductDetails.images.forEach((element) => {
+    let AnotherImages = document.createElement("img");
+    AnotherImages.setAttribute("src", element.src);
+    Other_4_Images_Container.append(AnotherImages);
+  });
+
+  Vendor.textContent = ProductDetails.vendor;
+  title.textContent = ProductDetails.title;
+  let num1 = Number(ProductDetails.compare_at_price.slice(1));
+  let num2 = Number(ProductDetails.price.slice(1));
+  discountPrice.textContent = ProductDetails.price;
+
+  let discount = Math.floor(((num1 - num2) / num1) * 100);
+  discountRate.textContent = `${discount}%`;
+  originalPrice.textContent = ProductDetails.compare_at_price;
+  colortag.textContent = "Choose a Color";
 
   // appending data
   Main_Image_Container.append(MainImageTag);
+  TitleDiv.append(Vendor, title);
+  mainPrice.append(discountPrice, discountRate);
+  priceDiv.append(mainPrice, originalPrice);
+  colorDiv.append(colortag, colors);
+  Details_Container.append(TitleDiv, priceDiv, colorDiv);
 }

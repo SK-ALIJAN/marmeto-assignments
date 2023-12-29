@@ -12,15 +12,16 @@ let Fetch_Data_From_Server = async () => {
     console.log(error.message);
   }
 };
+let cartNumber = 1;
+let colorTick = "Yellow";
 
 window.addEventListener("load", () => {
-  Attach_Data_To_Ui();
+  Attach_Data_To_Ui(null, cartNumber);
 });
 
 async function Attach_Data_To_Ui(imagelink) {
   // ............fetching data...................
   let ProductDetails = await Fetch_Data_From_Server();
-  console.log(ProductDetails);
   let imageSrc = imagelink ?? ProductDetails.images[0].src;
 
   Main_Image_Container.textContent = "";
@@ -62,8 +63,11 @@ async function Attach_Data_To_Ui(imagelink) {
     Other_4_Images_Container.append(AnotherImages);
   });
 
+  // product title
   Vendor.textContent = ProductDetails.vendor;
   title.textContent = ProductDetails.title;
+
+  // product price
   let num1 = Number(ProductDetails.compare_at_price.slice(1));
   let num2 = Number(ProductDetails.price.slice(1));
   discountPrice.textContent = `${ProductDetails.price}.00`;
@@ -71,21 +75,29 @@ async function Attach_Data_To_Ui(imagelink) {
   let discount = Math.floor(((num1 - num2) / num1) * 100);
   discountRate.textContent = `${discount}% Off`;
   originalPrice.textContent = `${ProductDetails.compare_at_price}.00`;
+
+  // color section
   colortag.textContent = "Choose a Color";
   ProductDetails.options[0].values.forEach((ele) => {
     let colorDiv = document.createElement("div");
     colorDiv.style.backgroundColor = Object.values(ele)[0];
-    colorDiv.addEventListener("mouseenter", () => {
+    let tick = document.createElement("p");
+    colorDiv.style.outline = `none`;
+    if (colorTick == Object.keys(ele)[0]) {
+      tick.innerHTML = `<i class="fa-solid fa-check"></i>`;
       colorDiv.style.outline = `2px solid ${Object.values(ele)[0]}`;
       colorDiv.style.outlineOffset = `5px`;
-    });
+    }
 
-    colorDiv.addEventListener("mouseout", () => {
-      colorDiv.style.outline = `none`;
+    colorDiv.addEventListener("click", () => {
+      colorTick = Object.keys(ele)[0];
+      Attach_Data_To_Ui();
     });
-
+    colorDiv.append(tick);
     colors.append(colorDiv);
   });
+
+  // size section
   sizetag.textContent = "Choose a Size";
   ProductDetails.options[1].values.forEach((ele) => {
     let sizeDiv = document.createElement("div");
@@ -101,10 +113,20 @@ async function Attach_Data_To_Ui(imagelink) {
     sizeDiv.append(input, label);
     sizes.append(sizeDiv);
   });
+
+  // add to cart section
   minusSign.textContent = "-";
-  numberShow.textContent = 0;
+  minusSign.addEventListener("click", () => cartItemIncrement("minus"));
+  numberShow.textContent = cartNumber;
   plusSign.textContent = "+";
+  plusSign.addEventListener("click", () => cartItemIncrement("plus"));
   cartBtn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Add To Cart`;
+  cartBtn.addEventListener("click", () => {
+    alert(`product added :) \nproduct price is $${cartNumber * num2}`);
+    cartBtn.textContent = "Added to cart";
+  });
+
+  // product description
   summary.innerHTML = ProductDetails.description;
 
   // .........add className............
@@ -141,4 +163,14 @@ async function Attach_Data_To_Ui(imagelink) {
     cartDiv,
     summary
   );
+}
+
+function cartItemIncrement(signal) {
+  if (signal == "plus") {
+    cartNumber++;
+    Attach_Data_To_Ui();
+  } else if (cartNumber > 1) {
+    cartNumber--;
+    Attach_Data_To_Ui();
+  }
 }

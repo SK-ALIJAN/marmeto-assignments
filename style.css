@@ -95,6 +95,11 @@
     width: 2.8rem;
     height: 2.8rem;
     cursor: pointer;
+    display: grid;
+    place-content: center;
+    font-weight: 600;
+    color: white;
+    font-size: larger;
 }
 
 .colors>div:hover {
@@ -235,7 +240,7 @@
     }
 
     .sizeDiv div>label {
-        font-size: 8px;
+        font-size: 9px;
         font-weight: 700;
     }
 
